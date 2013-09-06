@@ -1,20 +1,20 @@
 package main
 
 import (
-	"github.com/ugorji/go-msgpack"
+	"encoding/json"
+	"github.com/ugorji/go/codec"
+	"io"
 	"log"
 	"os"
-	"io"
-	"encoding/json"
 	"reflect"
 )
 
 func main() {
-	opts := msgpack.DefaultDecoderContainerResolver
+	handle := &codec.MsgpackHandle{}
 	// json encode chokes on map[interface{}]interface{} without
 	// this
-	opts.MapType =  reflect.TypeOf(map[string]interface{}(nil))
-	dec := msgpack.NewDecoder(os.Stdin, &opts)
+	handle.DecodeOptions.MapType = reflect.TypeOf(map[string]interface{}(nil))
+	dec := codec.NewDecoder(os.Stdin, handle)
 	enc := json.NewEncoder(os.Stdout)
 	for {
 		var data interface{}
